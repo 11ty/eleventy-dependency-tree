@@ -4,6 +4,12 @@ Returns an unordered array of local paths to dependencies of a node JavaScript f
 
 Reduced feature (faster) alternative to the [`dependency-tree` package](https://www.npmjs.com/package/dependency-tree) that only works with stock node JS. This is used by Eleventy to find dependencies of a JavaScript file to watch for changes to re-run Eleventy’s build.
 
+## Installation
+
+```
+npm install --save-dev @11ty/dependency-tree
+```
+
 ## Features
 
 * Ignores `node_modules`
