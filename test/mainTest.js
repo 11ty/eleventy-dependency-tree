@@ -1,5 +1,5 @@
-import test from "ava";
-import DependencyTree from "../main.js";
+const test = require("ava");
+const DependencyTree = require("../main.js");
 
 test("Nonexistent", t => {
 	t.throws(() => {
@@ -63,4 +63,18 @@ test("dot dot (dependency is up a directory)", t => {
 	t.deepEqual(DependencyTree("./test/stubs/dotdot/dotdot.js").sort(), [
 		"./test/stubs/simple2.js"
 	]);
+});
+
+test("only node_modules", t => {
+	t.deepEqual(DependencyTree("./test/stubs/uses_node_modules.js", {
+		nodeModuleNamesOnly: true
+	}).sort(), [
+		"@sindresorhus/is",
+		"lodash",
+	]);
+});
+
+test("getNodeModuleName", t => {
+	t.is(DependencyTree.getNodeModuleName("./eleventy-dependency-tree/node_modules/lodash/lodash.js"), "lodash");
+	t.is(DependencyTree.getNodeModuleName("./eleventy-dependency-tree/node_modules/@sindresorhus/is/dist/index.js"), "@sindresorhus/is");
 });

@@ -13,14 +13,39 @@ function getRelativePath(filename) {
   return result;
 }
 
+function getNodeModuleName(filename) {
+  let foundNodeModules = false;
+  let moduleName = [];
+
+  let s = filename.split(path.sep);
+  for(let entry of s) {
+    if(foundNodeModules) {
+      moduleName.push(entry);
+      if(!entry.startsWith("@")) {
+        return moduleName.join("/");
+      }
+    }
+
+    if(entry === "node_modules") {
+      foundNodeModules = true;
+    }
+  }
+
+  return false;
+}
+
 /* unordered */
-function getDependenciesFor(filename, avoidCircular, allowNotFound = false) {
+function getDependenciesFor(filename, avoidCircular, optionsArg = {}) {
+  let options = Object.assign({
+    allowNotFound: false,
+    nodeModuleNamesOnly: false,
+  }, optionsArg);
   let absoluteFilename = getAbsolutePath(filename)
 
   try {
     require(absoluteFilename);
   } catch(e) {
-    if(e.code === "MODULE_NOT_FOUND" && allowNotFound) {
+    if(e.code === "MODULE_NOT_FOUND" && options.allowNotFound) {
       // do nothing
     } else {
       throw e;
@@ -39,14 +64,14 @@ function getDependenciesFor(filename, avoidCircular, allowNotFound = false) {
   let dependencies = new Set();
 
   if(!mod) {
-    if(!allowNotFound) {
+    if(!options.allowNotFound) {
       throw new Error(`Could not find ${filename} in @11ty/dependency-tree`);
     }
   } else {
     let relativeFilename = getRelativePath(mod.filename);
     if(!avoidCircular) {
       avoidCircular = {};
-    } else {
+    } else if(!options.nodeModuleNamesOnly) {
       dependencies.add(relativeFilename);
     }
 
@@ -55,10 +80,14 @@ function getDependenciesFor(filename, avoidCircular, allowNotFound = false) {
     if(mod.children) {
       for(let child of mod.children) {
         let relativeChildFilename = getRelativePath(child.filename);
-        if(relativeChildFilename.indexOf("node_modules") === -1 && // filter out node_modules
+        let nodeModuleName = getNodeModuleName(child.filename);
+
+        if(options.nodeModuleNamesOnly && nodeModuleName) {
+          dependencies.add(nodeModuleName);
+        } else if(nodeModuleName === false && // filter out node_modules
           !dependencies.has(relativeChildFilename) && // avoid infinite looping with circular deps
           !avoidCircular[relativeChildFilename] ) {
-          for(let dependency of getDependenciesFor(relativeChildFilename, avoidCircular, allowNotFound)) {
+          for(let dependency of getDependenciesFor(relativeChildFilename, avoidCircular, options)) {
             dependencies.add(dependency);
           }
         }
@@ -70,7 +99,8 @@ function getDependenciesFor(filename, avoidCircular, allowNotFound = false) {
 }
 
 function getCleanDependencyListFor(filename, options = {}) {
-  return Array.from( getDependenciesFor(filename, null, options.allowNotFound) );
+  return Array.from( getDependenciesFor(filename, null, options) );
 }
 
 module.exports = getCleanDependencyListFor;
+module.exports.getNodeModuleName = getNodeModuleName;

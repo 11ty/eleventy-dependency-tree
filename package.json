@@ -13,14 +13,13 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "ava": "^2.4.0"
+    "ava": "^3.15.0"
   },
   "ava": {
     "files": [
       "./test/*.js"
     ],
-    "sources": [
-      "./main.js",
+    "ignoredByWatcher": [
       "./test/stubs/**"
     ]
   }
