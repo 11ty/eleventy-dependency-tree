@@ -17,6 +17,7 @@ npm install --save-dev @11ty/dependency-tree
 ## Features
 
 * Ignores `node_modules`
+* Or, use `nodeModuleNamesOnly` to return a list of node_modules packages.
 * Ignores Node’s built-ins (e.g. `path`)
 * Handles circular dependencies (Node does this too)
 
@@ -47,5 +48,16 @@ const DependencyTree = require("@11ty/dependency-tree");
 DependencyTree("./this-does-not-exist.js"); // throws an error
 
 DependencyTree("./this-does-not-exist.js", { allowNotFound: true });
+// returns []
+```
+
+### `nodeModuleNamesOnly`
+
+Navigates all the local files and returns a list of unique package names (not file names) required.
+
+```js
+const DependencyTree = require("@11ty/dependency-tree");
+
+DependencyTree("./this-does-not-exist.js", { nodeModuleNamesOnly: true });
 // returns []
 ```
