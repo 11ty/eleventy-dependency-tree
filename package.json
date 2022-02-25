@@ -6,6 +6,10 @@
   "scripts": {
     "test": "npx ava"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/11ty/eleventy-dependency-tree.git"
+  },
   "author": {
     "name": "Zach Leatherman",
     "email": "zach@zachleat.com",
