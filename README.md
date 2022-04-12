@@ -51,13 +51,42 @@ DependencyTree("./this-does-not-exist.js", { allowNotFound: true });
 // returns []
 ```
 
-### `nodeModuleNamesOnly`
+### `nodeModuleNames`
 
-(Added in v2.0.0) Navigates all the local files and returns a list of unique package names (not file names) required.
+(Added in v2.0.1) Controls whether or not node package names are included in the list of dependencies.
+
+* `nodeModuleNames: "include"`: included alongside the local JS files.
+* `nodeModuleNames: "exclude"` (default): node module package names are excluded.
+* `nodeModuleNames: "only"`: only node module package names are returned.
+
+```js
+// my-file.js:
+
+require("./my-local-dependency.js");
+require("@11ty/eleventy");
+```
 
 ```js
 const DependencyTree = require("@11ty/dependency-tree");
 
-DependencyTree("./this-does-not-exist.js", { nodeModuleNamesOnly: true });
-// returns []
+DependencyTree("./my-file.js");
+// returns ["./my-local-dependency.js"]
+
+DependencyTree("./my-file.js", { nodeModuleNames: "exclude" });
+// returns ["./my-local-dependency.js"]
+
+DependencyTree("./my-file.js", { nodeModuleNames: "include" });
+// returns ["./my-local-dependency.js", "@11ty/eleventy"]
+
+DependencyTree("./my-file.js", { nodeModuleNames: "only" });
+// returns ["@11ty/eleventy"]
 ```
+
+#### (Deprecated) `nodeModuleNamesOnly`
+
+(Added in v2.0.0) Changed to use `nodeModuleNames` option instead. Backwards compatibility is maintained automatically.
+
+* `nodeModuleNamesOnly: false` is mapped to `nodeModuleNames: "exclude"`
+* `nodeModuleNamesOnly: true` is mapped to `nodeModuleNames: "only"`
+
+If both `nodeModuleNamesOnly` and `nodeModuleNames` are included in options, `nodeModuleNames` takes precedence.
