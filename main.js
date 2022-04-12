@@ -36,9 +36,20 @@ function getNodeModuleName(filename) {
 
 /* unordered */
 function getDependenciesFor(filename, avoidCircular, optionsArg = {}) {
+  // backwards compatibility with `nodeModuleNamesOnly` boolean option
+  // Using `nodeModuleNames` property moving forward
+  if(("nodeModuleNamesOnly" in optionsArg) && !("nodeModuleNames" in optionsArg)) {
+    if(optionsArg.nodeModuleNamesOnly === true) {
+      optionsArg.nodeModuleNames = "only";
+    }
+    if(optionsArg.nodeModuleNamesOnly === false) {
+      optionsArg.nodeModuleNames = "exclude";
+    }
+  }
+
   let options = Object.assign({
     allowNotFound: false,
-    nodeModuleNamesOnly: false,
+    nodeModuleNames: "exclude", // also "include" or "only"
   }, optionsArg);
   let absoluteFilename = getAbsolutePath(filename)
 
@@ -71,7 +82,7 @@ function getDependenciesFor(filename, avoidCircular, optionsArg = {}) {
     let relativeFilename = getRelativePath(mod.filename);
     if(!avoidCircular) {
       avoidCircular = {};
-    } else if(!options.nodeModuleNamesOnly) {
+    } else if(options.nodeModuleNames !== "only") {
       dependencies.add(relativeFilename);
     }
 
@@ -82,13 +93,16 @@ function getDependenciesFor(filename, avoidCircular, optionsArg = {}) {
         let relativeChildFilename = getRelativePath(child.filename);
         let nodeModuleName = getNodeModuleName(child.filename);
 
-        if(options.nodeModuleNamesOnly && nodeModuleName) {
+        if(options.nodeModuleNames !== "exclude" && nodeModuleName) {
           dependencies.add(nodeModuleName);
-        } else if(nodeModuleName === false && // filter out node_modules
-          !dependencies.has(relativeChildFilename) && // avoid infinite looping with circular deps
-          !avoidCircular[relativeChildFilename] ) {
-          for(let dependency of getDependenciesFor(relativeChildFilename, avoidCircular, options)) {
-            dependencies.add(dependency);
+        }
+        // Add dependencies of this dependency (not top level node_modules)
+        if(nodeModuleName === false) {
+          if(!dependencies.has(relativeChildFilename) && // avoid infinite looping with circular deps
+            !avoidCircular[relativeChildFilename] ) {
+            for(let dependency of getDependenciesFor(relativeChildFilename, avoidCircular, options)) {
+              dependencies.add(dependency);
+            }
           }
         }
       }

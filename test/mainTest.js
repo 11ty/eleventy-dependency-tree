@@ -78,3 +78,15 @@ test("getNodeModuleName", t => {
 	t.is(DependencyTree.getNodeModuleName("./eleventy-dependency-tree/node_modules/lodash/lodash.js"), "lodash");
 	t.is(DependencyTree.getNodeModuleName("./eleventy-dependency-tree/node_modules/@sindresorhus/is/dist/index.js"), "@sindresorhus/is");
 });
+
+test("both files and node_modules", t => {
+	t.deepEqual(DependencyTree("./test/stubs/uses_node_modules.js", {
+		nodeModuleNames: "include"
+	}).sort(), [
+		"./test/stubs/parent/child1.js",
+		"./test/stubs/parent/grandchild.js",
+		"./test/stubs/parent/greatgrandchild.js",
+		"@sindresorhus/is",
+		"lodash",
+	]);
+});
