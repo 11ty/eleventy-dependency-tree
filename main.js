@@ -19,6 +19,10 @@ function getNodeModuleName(filename) {
 
   let s = filename.split(path.sep);
   for(let entry of s) {
+    if(entry === '.pnpm') {
+      foundNodeModules = false;
+    }
+    
     if(foundNodeModules) {
       moduleName.push(entry);
       if(!entry.startsWith("@")) {
