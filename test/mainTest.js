@@ -1,4 +1,5 @@
 const test = require("ava");
+const { TemplatePath } = require("@11ty/eleventy-utils");
 const DependencyTree = require("../main.js");
 
 test("Nonexistent", t => {
@@ -75,8 +76,11 @@ test("only node_modules", t => {
 });
 
 test("getNodeModuleName", t => {
-	t.is(DependencyTree.getNodeModuleName("./eleventy-dependency-tree/node_modules/lodash/lodash.js"), "lodash");
-	t.is(DependencyTree.getNodeModuleName("./eleventy-dependency-tree/node_modules/@sindresorhus/is/dist/index.js"), "@sindresorhus/is");
+	let p1 = TemplatePath.normalizeOperatingSystemFilePath("./eleventy-dependency-tree/node_modules/lodash/lodash.js")
+	t.is(DependencyTree.getNodeModuleName(p1), "lodash");
+
+	let p2 = TemplatePath.normalizeOperatingSystemFilePath("./eleventy-dependency-tree/node_modules/@sindresorhus/is/dist/index.js")
+	t.is(DependencyTree.getNodeModuleName(p2), "@sindresorhus/is");
 });
 
 test("both files and node_modules", t => {
