@@ -1,8 +1,10 @@
 # dependency-tree
 
-Returns an unordered array of local paths to dependencies of a node JavaScript file (everything it or any of its dependencies `require`s).
+Returns an unordered array of local paths to dependencies of a CommonJS node JavaScript file (everything it or any of its dependencies `require`s).
 
-Reduced feature (faster) alternative to the [`dependency-tree` package](https://www.npmjs.com/package/dependency-tree) that only works with stock node JS. This is used by Eleventy to find dependencies of a JavaScript file to watch for changes to re-run Eleventy’s build.
+* See also: [`dependency-tree-esm`](https://github.com/11ty/eleventy-dependency-tree-esm) for ES Modules.
+
+Reduced feature (faster) alternative to the [`dependency-tree` package](https://www.npmjs.com/package/dependency-tree). This is used by Eleventy to find dependencies of a JavaScript file to watch for changes to re-run Eleventy’s build.
 
 ## Big Huge Caveat
 
@@ -17,7 +19,7 @@ npm install --save-dev @11ty/dependency-tree
 ## Features
 
 * Ignores `node_modules`
-* Or, use `nodeModuleNamesOnly` to return a list of node_modules packages (added in v2.0.0)
+* Or, use `nodeModuleNames` to control whether or not `node_modules` package names are included (added in v2.0.1)
 * Ignores Node’s built-ins (e.g. `path`)
 * Handles circular dependencies (Node does this too)
 
