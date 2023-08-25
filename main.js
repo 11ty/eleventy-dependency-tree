@@ -1,4 +1,5 @@
 const path = require("path");
+const { TemplatePath } = require("@11ty/eleventy-utils");
 
 function getAbsolutePath(filename) {
   let normalizedFilename = path.normalize(filename); // removes dot slash
@@ -113,7 +114,14 @@ function getDependenciesFor(filename, avoidCircular, optionsArg = {}) {
 }
 
 function getCleanDependencyListFor(filename, options = {}) {
-  return Array.from( getDependenciesFor(filename, null, options) );
+  let deps = Array.from( getDependenciesFor(filename, null, options) );
+
+  return deps.map(filePath => {
+    if(filePath.startsWith("./")) {
+      return TemplatePath.standardizeFilePath(filePath);
+    }
+    return filePath; // node_module name
+  });
 }
 
 module.exports = getCleanDependencyListFor;
