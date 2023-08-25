@@ -1,4 +1,4 @@
-# dependency-tree
+# `dependency-tree`
 
 Returns an unordered array of local paths to dependencies of a CommonJS node JavaScript file (everything it or any of its dependencies `require`s).
 
