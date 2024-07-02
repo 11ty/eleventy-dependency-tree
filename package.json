@@ -1,6 +1,6 @@
 {
   "name": "@11ty/dependency-tree",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Finds all JavaScript CommmonJS require() dependencies from a filename.",
   "main": "main.js",
   "files": [
