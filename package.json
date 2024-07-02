@@ -3,6 +3,11 @@
   "version": "3.0.0",
   "description": "Finds all JavaScript CommmonJS require() dependencies from a filename.",
   "main": "main.js",
+  "files": [
+    "main.js",
+    "!test",
+    "!test/**"
+  ],
   "scripts": {
     "test": "npx ava"
   },
