@@ -25,15 +25,17 @@
     "files": [
       "./test/*.js"
     ],
-    "ignoredByWatcher": [
-      "./test/stubs/**"
-    ]
+    "watchMode": {
+      "ignoreChanged": [
+        "./test/stubs/**"
+      ]
+    }
   },
   "devDependencies": {
-    "@sindresorhus/is": "^4.6.0",
-    "ava": "^5.3.1"
+    "@sindresorhus/is": "^7.0.1",
+    "ava": "^6.2.0"
   },
   "dependencies": {
-    "@11ty/eleventy-utils": "^1.0.2"
+    "@11ty/eleventy-utils": "^2.0.1"
   }
 }
