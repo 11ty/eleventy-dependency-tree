@@ -32,8 +32,8 @@
     }
   },
   "devDependencies": {
-    "@sindresorhus/is": "^4.6.0",
-    "ava": "^6.2.0"
+    "@sindresorhus/is": "^7.1.1",
+    "ava": "^6.4.1"
   },
   "dependencies": {
     "@11ty/eleventy-utils": "^2.0.1"
