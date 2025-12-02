@@ -32,7 +32,7 @@
     }
   },
   "devDependencies": {
-    "@sindresorhus/is": "^6.3.1",
+    "@sindresorhus/is": "^4.6.0",
     "ava": "^6.4.1"
   },
   "dependencies": {
