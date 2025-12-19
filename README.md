@@ -1,8 +1,9 @@
-# `dependency-tree`
+# `@11ty/dependency-tree`
 
 Returns an unordered array of local paths to dependencies of a CommonJS node JavaScript file (everything it or any of its dependencies `require`s).
 
-* See also: [`dependency-tree-esm`](https://github.com/11ty/eleventy-dependency-tree-esm) for ES Modules.
+* See also: [`@11ty/dependency-tree-esm`](https://github.com/11ty/eleventy-utils/tree/main/parse-deps-esm) for the ESM version.
+* See also: [`@11ty/dependency-tree-typescript`](https://github.com/11ty/eleventy-utils/tree/main/parse-deps-typescript) for the TypeScript version.
 
 Reduced feature (faster) alternative to the [`dependency-tree` package](https://www.npmjs.com/package/dependency-tree). This is used by Eleventy to find dependencies of a JavaScript file to watch for changes to re-run Eleventy’s build.
 
