@@ -108,3 +108,19 @@ if(semver.gte(version, "22.13.0") || semver.gte(version, "20.19.0")) {
 		});
 	});
 }
+
+if(semver.gte(version, "22.6.0")) {
+	test("TypeScript .ts", t => {
+		t.deepEqual(DependencyTree("./test/stubs/typescript.ts"), [
+			"./test/stubs/simple2.js",
+			"./test/stubs/empty.ts",
+		]);
+	});
+
+	test("TypeScript .cts", t => {
+		t.deepEqual(DependencyTree("./test/stubs/typescript.cts"), [
+			"./test/stubs/simple2.js",
+			"./test/stubs/empty.ts",
+		]);
+	});
+}
