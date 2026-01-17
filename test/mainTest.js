@@ -1,6 +1,9 @@
 const test = require("ava");
 const { TemplatePath } = require("@11ty/eleventy-utils");
 const DependencyTree = require("../main.js");
+const { getPackagesByType } = DependencyTree;
+const semver = require("semver");
+const { version } = require('node:process');
 
 test("Nonexistent", t => {
 	t.throws(() => {
@@ -94,3 +97,14 @@ test("both files and node_modules", t => {
 		"lodash",
 	]);
 });
+
+if(semver.gte(version, "22.13.0") || semver.gte(version, "20.19.0")) {
+	test("require(esm) targets module", t => {
+		t.deepEqual(getPackagesByType("./test/stubs/module.mjs"), {
+			commonjs: [],
+			esm: [
+				"./test/stubs/module.mjs",
+			],
+		});
+	});
+}

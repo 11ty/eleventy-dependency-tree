@@ -93,3 +93,17 @@ DependencyTree("./my-file.js", { nodeModuleNames: "only" });
 * `nodeModuleNamesOnly: true` is mapped to `nodeModuleNames: "only"`
 
 If both `nodeModuleNamesOnly` and `nodeModuleNames` are included in options, `nodeModuleNames` takes precedence.
+
+### `getPackagesByType` method
+
+_Added in v4.0.2._
+
+```js
+const DependencyTree = require("@11ty/dependency-tree");
+const {getPackagesByType} = DependencyTree;
+
+// With `require(esm)` support, some targets may be modules!
+// Return separate lists for commonjs and esm lists
+getPackagesByType("./my-file.js");
+// returns { commonjs: ["./my-file.js"], esm: [] }
+```

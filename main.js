@@ -1,4 +1,4 @@
-const path = require("path");
+const path = require("node:path");
 const { TemplatePath } = require("@11ty/eleventy-utils");
 
 function getAbsolutePath(filename) {
@@ -23,7 +23,7 @@ function getNodeModuleName(filename) {
     if(entry === '.pnpm') {
       foundNodeModules = false;
     }
-    
+
     if(foundNodeModules) {
       moduleName.push(entry);
       if(!entry.startsWith("@")) {
@@ -56,10 +56,14 @@ function getDependenciesFor(filename, avoidCircular, optionsArg = {}) {
     allowNotFound: false,
     nodeModuleNames: "exclude", // also "include" or "only"
   }, optionsArg);
-  let absoluteFilename = getAbsolutePath(filename)
+  let absoluteFilename = getAbsolutePath(filename);
+  let modules = new Set();
 
   try {
-    require(absoluteFilename);
+    let res = require(absoluteFilename);
+    if(res[Symbol.toStringTag] === "Module" || res.__esModule) {
+      modules.add(filename);
+    }
   } catch(e) {
     if(e.code === "MODULE_NOT_FOUND" && options.allowNotFound) {
       // do nothing
@@ -93,7 +97,7 @@ function getDependenciesFor(filename, avoidCircular, optionsArg = {}) {
 
     avoidCircular[relativeFilename] = true;
 
-    if(mod.children) {
+    if(Array.isArray(mod.children) && mod.children.length > 0) {
       for(let child of mod.children) {
         let relativeChildFilename = getRelativePath(child.filename);
         let nodeModuleName = getNodeModuleName(child.filename);
@@ -105,8 +109,12 @@ function getDependenciesFor(filename, avoidCircular, optionsArg = {}) {
         if(nodeModuleName === false) {
           if(!dependencies.has(relativeChildFilename) && // avoid infinite looping with circular deps
             !avoidCircular[relativeChildFilename] ) {
-            for(let dependency of getDependenciesFor(relativeChildFilename, avoidCircular, options)) {
+            let { commonjs, esm } = getDependenciesFor(relativeChildFilename, avoidCircular, options);
+            for(let dependency of commonjs) {
               dependencies.add(dependency);
+            }
+            for(let dependency of esm) {
+              modules.add(dependency);
             }
           }
         }
@@ -114,19 +122,36 @@ function getDependenciesFor(filename, avoidCircular, optionsArg = {}) {
     }
   }
 
-  return dependencies;
+  return {
+    esm: modules,
+    commonjs: dependencies,
+  }
 }
 
-function getCleanDependencyListFor(filename, options = {}) {
-  let deps = Array.from( getDependenciesFor(filename, null, options) );
-
-  return deps.map(filePath => {
+function normalizeList(packageSet) {
+  return Array.from( packageSet ).map(filePath => {
     if(filePath.startsWith("./")) {
       return TemplatePath.standardizeFilePath(filePath);
     }
     return filePath; // node_module name
-  });
+  })
+}
+
+function getCleanDependencyListFor(filename, options = {}) {
+  let { commonjs } = getDependenciesFor(filename, null, options);
+
+  return normalizeList(commonjs);
+}
+
+function getCleanDependencyListByTypeFor(filename, options = {}) {
+  let { commonjs, esm } = getDependenciesFor(filename, null, options);
+
+  return {
+    commonjs: normalizeList(commonjs),
+    esm: normalizeList(esm),
+  };
 }
 
 module.exports = getCleanDependencyListFor;
+module.exports.getPackagesByType = getCleanDependencyListByTypeFor;
 module.exports.getNodeModuleName = getNodeModuleName;
