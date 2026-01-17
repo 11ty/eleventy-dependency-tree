@@ -98,29 +98,25 @@ test("both files and node_modules", t => {
 	]);
 });
 
-if(semver.gte(version, "22.13.0") || semver.gte(version, "20.19.0")) {
-	test("require(esm) targets module", t => {
-		t.deepEqual(getPackagesByType("./test/stubs/module.mjs"), {
-			commonjs: [],
-			esm: [
-				"./test/stubs/module.mjs",
-			],
-		});
+(semver.gte(version, "22.13.0") || semver.gte(version, "20.19.0") ? test : test.skip)("require(esm) targets module", t => {
+	t.deepEqual(getPackagesByType("./test/stubs/module.mjs"), {
+		commonjs: [],
+		esm: [
+			"./test/stubs/module.mjs",
+		],
 	});
-}
+});
 
-if(semver.gte(version, "22.6.0")) {
-	test("TypeScript .ts", t => {
-		t.deepEqual(DependencyTree("./test/stubs/typescript.ts"), [
-			"./test/stubs/simple2.js",
-			"./test/stubs/empty.ts",
-		]);
-	});
+(semver.gte(version, "22.6.0") ? test : test.skip)("TypeScript .ts", t => {
+	t.deepEqual(DependencyTree("./test/stubs/typescript.ts"), [
+		"./test/stubs/simple2.js",
+		"./test/stubs/empty.ts",
+	]);
+});
 
-	test("TypeScript .cts", t => {
-		t.deepEqual(DependencyTree("./test/stubs/typescript.cts"), [
-			"./test/stubs/simple2.js",
-			"./test/stubs/empty.ts",
-		]);
-	});
-}
+(semver.gte(version, "22.6.0") ? test : test.skip)("TypeScript .cts", t => {
+	t.deepEqual(DependencyTree("./test/stubs/typescript.cts"), [
+		"./test/stubs/simple2.js",
+		"./test/stubs/empty.ts",
+	]);
+});
