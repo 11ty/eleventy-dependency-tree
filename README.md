@@ -1,5 +1,8 @@
 # `@11ty/dependency-tree`
 
+> [!IMPORTANT]
+> This package has moved to [`11ty/eleventy-utils`](https://github.com/11ty/eleventy-utils/tree/main/parse-deps-commonjs).
+
 Returns an unordered array of local paths to dependencies of a CommonJS node JavaScript file (everything it or any of its dependencies `require`s).
 
 * See also: [`@11ty/dependency-tree-esm`](https://github.com/11ty/eleventy-utils/tree/main/parse-deps-esm) for the ESM version.
